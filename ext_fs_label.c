@@ -16,14 +16,11 @@ int main(int argc, char const *argv[]) {
         fprintf(stderr, "ERROR: open() failed: %m\n");
         return EXIT_FAILURE;
     }
-    char *boot_sector = (char *) malloc(1024 * sizeof(char));
-    if (read(fd, boot_sector, 1024) < 0) {
-        fprintf(stderr, "ERROR: read() failed: %m\n");
-        free(boot_sector);
+    if (lseek(fd, 1024, SEEK_SET) < 0) {
+        fprintf(stderr, "ERROR: lseek() failed: %m\n");
         close(fd);
         return EXIT_FAILURE;
     }
-    free(boot_sector);
     struct ext2_super_block super_block;
     bzero(&super_block, sizeof(struct ext2_super_block));
     if (read(fd, &super_block, sizeof(struct ext2_super_block)) < 0) {
