@@ -23,6 +23,14 @@ typedef struct vorlesung_s {
     struct vorlesung_s *next;
 } vorlesung_t;
 
+void print_file_format(void) {
+    printf("\n"
+           "Aufbau der CSV-Datei:\n"
+           "Name_Vorlesung,Blaetter_gesamt,Anteil_fuer_Zulassung,Blatt1_erreicht,Blatt1_gesamt,Blatt2_erreicht,Blatt2_gesamt,...\n\n"
+           "Diese Zeile in die erste Zeile der CSV-Datei einfügen und direkt darunter die\n"
+           "richtigen Daten einfügen. Die Beschreibungszeile wird übersprungen.\n");
+}
+
 float berechne_punkte_pro_blatt(vorlesung_t *vorlesung) {
     if (vorlesung->anzahl_blaetter <= vorlesung->bisherige_anzahl_blaetter || vorlesung->gesamtpunktzahl >= vorlesung->gesamtpunktzahl_insgesamt) {
         return 0;
@@ -96,6 +104,7 @@ vorlesung_t *read_vorlesung(char *line) {
     token = strtok(line, ",");
     if (token == NULL) {
         printf("ERROR: Zeile '%s ...' fehlerhaft\n", line);
+        print_file_format();
         free(result);
         return NULL;
     }
@@ -105,6 +114,7 @@ vorlesung_t *read_vorlesung(char *line) {
     token = strtok(NULL, ",");
     if (token == NULL) {
         printf("ERROR: Zeile '%s ...' fehlerhaft\n", line);
+        print_file_format();
         free(result->name);
         free(result);
         return NULL;
@@ -113,6 +123,7 @@ vorlesung_t *read_vorlesung(char *line) {
     token = strtok(NULL, ",");
     if (token == NULL) {
         printf("ERROR: Zeile '%s ...' fehlerhaft\n", line);
+        print_file_format();
         free(result->name);
         free(result);
         return NULL;
@@ -129,6 +140,7 @@ vorlesung_t *read_vorlesung(char *line) {
         token = strtok(NULL, ",");
         if (token == NULL) {
             printf("ERROR: Zeile '%s ...' fehlerhaft\n", line);
+            print_file_format();
             free(new);
             free_blatt_list(result->blaetter);
             free(result->name);
@@ -190,11 +202,12 @@ int main(int argc, char const *argv[]) {
     if (argc != 2) {
         printf("ERROR: Usage: ./zulassungsrechner daten.csv\n"
                "       mit einer daten.csv\n");
+        print_file_format();
         return EXIT_FAILURE;
     }
     FILE *datei = fopen(argv[1], "r");
     if (datei == NULL) {
-        printf("ERROR: Konnte Datei nicht öffnen\n");
+        printf("ERROR: Konnte Datei '%s' nicht öffnen\n", argv[1]);
         return EXIT_FAILURE;
     }
     char *line = NULL;
