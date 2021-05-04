@@ -158,13 +158,6 @@ vorlesung_t *read_vorlesung(char *line) {
     return result;
 }
 
-void terminate(char *str) {
-    while (*str != '\n') {
-        str++;
-    }
-    *str = '\0';
-}
-
 void show_blaetter(blatt_t *list) {
     if (list == NULL) return;
     printf("    Blätter:\n");
@@ -218,7 +211,7 @@ int main(int argc, char const *argv[]) {
     line = NULL;
     n = 0;
     while (getline(&line, &n, datei) > 0) {
-        terminate(line);
+        line[n - 1] = '\0';
         vorlesung_t *new = read_vorlesung(line);
         if (new == NULL) {
             fclose(datei);
